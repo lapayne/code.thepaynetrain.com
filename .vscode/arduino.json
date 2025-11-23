@@ -2,5 +2,6 @@
     "port": "COM7",
     "configuration": "JTAGAdapter=default,CDCOnBoot=cdc,PartitionScheme=default,CPUFreq=160,FlashMode=qio,FlashFreq=80,FlashSize=4M,UploadSpeed=921600,DebugLevel=none,EraseFlash=none",
     "board": "esp32:esp32:esp32c3-devkitlipo",
-    "programmer": "esptool"
+    "programmer": "",
+    "sketch": "arduino-ide\\basic_blink\\basic_blink.ino"
 }

@@ -15,7 +15,6 @@ WebServer server(80);
 // Global state variables
 // Initial state set to LOW (ON for Active-Low LEDs like on the C3)
 int ledState = LOW; 
-bool serverRunning = false; // Tracks if the web server has been successfully started
 
 // --- HTML Content Generation ---
 
@@ -40,7 +39,7 @@ String getHtmlPage() {
   html += "<h1>ESP32-C3 LED Server</h1>";
   
   // Display current LED status
-  // CRITICAL FIX: Check for LOW state, as LOW turns the LED ON (Active-Low)
+  // Check for LOW state, as LOW turns the LED ON (Active-Low)
   if (ledState == LOW) { 
     html += "<p class='status on'>LED Status: ON</p>";
   } else {
@@ -58,6 +57,7 @@ String getHtmlPage() {
 // --- Handler Functions ---
 
 void handleRoot() {
+  // Send the generated HTML page
   server.send(200, "text/html", getHtmlPage());
 }
 
@@ -84,49 +84,7 @@ void handleNotFound() {
   server.send(404, "text/plain", "404: Not Found");
 }
 
-
-// --- Reconnection Logic (Reintegrated for Stability) ---
-
-// Function to check and handle Wi-Fi connection status and start/stop server
-void handleWiFi() {
-  // Check if Wi-Fi is NOT connected
-  if (WiFi.status() != WL_CONNECTED) {
-    // If the server was running, stop it first
-    if (serverRunning) {
-      serverRunning = false;
-      Serial.println("WiFi lost. Web server stopped. Attempting to reconnect...");
-    }
-    
-    // Attempt reconnection 
-    static unsigned long lastAttempt = 0;
-    // Only attempt to reconnect every 10 seconds to avoid flooding
-    if (millis() - lastAttempt > 10000) { 
-        WiFi.reconnect();
-        lastAttempt = millis();
-    }
-
-  } else {
-    // Wi-Fi IS connected
-    if (!serverRunning) {
-      // If server is not running, start it
-      
-      // Configure Server Routes (needs to be done before server.begin)
-      server.on("/", handleRoot);
-      server.on("/LED_ON", handleLedOn);
-      server.on("/LED_OFF", handleLedOff);
-      server.onNotFound(handleNotFound);
-
-      server.begin();
-      serverRunning = true;
-      Serial.println("\nWiFi connected successfully!");
-      Serial.print("Server IP address: ");
-      Serial.println(WiFi.localIP());
-      Serial.println("HTTP server started on port 80.");
-    }
-  }
-}
-
-// --- Setup and Loop ---
+// --- Setup and Loop (Simplified) ---
 
 void setup() {
   // Start serial communication for debugging at baud 115200
@@ -136,21 +94,47 @@ void setup() {
   // Initialize the physical pin state
   digitalWrite(ledPin, ledState);
   
-  // Start the initial connection attempt.
+  // Connect to the Wi-Fi you specified above
   Serial.print("Attempting to connect to SSID: ");
   Serial.println(ssid);
+
+  // Start the connection process and authenticate using your password
   WiFi.begin(ssid, password);
+
+  // --- SIMPLE BLOCKING CONNECTION ---
+  // Wait for connection to succeed (blocks everything else until connected)
+  while (WiFi.status() != WL_CONNECTED) {
+    delay(500);
+    Serial.print(".");
+  }
+
+  // Connection successful!
+  // Print out details to the serial console so you know what the IP is.
+  Serial.println("\nWiFi connected successfully!");
+  Serial.print("Server IP address: ");
+  // Print the IP address to the Serial Monitor so you know where to navigate
+  Serial.println(WiFi.localIP());
+  // --- END SIMPLE BLOCKING CONNECTION ---
+
+  // Configure Web Server Routes
+
+  // Map the root path to handleRoot function
+  server.on("/", handleRoot);
+  // Map /LED_ON to handleLedOn function
+  server.on("/LED_ON", handleLedOn); 
+  // Map /LED_OFF to handleLedOff function
+  server.on("/LED_OFF", handleLedOff); 
+// Map any other path to 404 handler
+  server.onNotFound(handleNotFound); 
+
+  // Start the web server
+  server.begin();
+  Serial.println("HTTP server started on port 80.");
 }
 
 void loop() {
-  // 1. Manage Wi-Fi connection and server state
-  handleWiFi();
-  
-  // 2. Handle client requests ONLY if the server is running
-  if (serverRunning) {
-    // CRITICAL: Must be called repeatedly to process incoming client requests
-    server.handleClient();
-  }
+  // CRITICAL: Must be called repeatedly to process incoming client requests
+  server.handleClient();
   
   // Allows the Wi-Fi and FreeRTOS tasks time to run, improving responsiveness
   delay(1); 
