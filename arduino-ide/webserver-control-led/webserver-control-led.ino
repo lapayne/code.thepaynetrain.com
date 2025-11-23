@@ -19,7 +19,7 @@ int ledState = LOW;
 // --- HTML Content Generation ---
 
 // Function to generate the HTML webpage with status and buttons
-String getHtmlPage() {
+void handleRoot() {
   String html = "<!DOCTYPE html><html>";
   html += "<head><meta name='viewport' content='width=device-width, initial-scale=1'>";
   html += "<title>ESP32-C3 LED Control</title>";
@@ -51,15 +51,10 @@ String getHtmlPage() {
   html += "<p><a href='/LED_OFF' class='btn'>Turn LED OFF</a></p>";
   
   html += "</div></body></html>";
-  return html;
+  server.send(200, "text/html", html);
 }
 
 // --- Handler Functions ---
-
-void handleRoot() {
-  // Send the generated HTML page
-  server.send(200, "text/html", getHtmlPage());
-}
 
 void handleLedOn() {
   // LOW is ON for the C3 LED
