@@ -1,0 +1,45 @@
+esphome:
+  name: onboardled
+  platformio_options:
+    upload_port: COM7
+
+esp32:
+  board: esp32-c3-devkitm-1
+  framework:
+    type: esp-idf
+
+# Enable logging
+logger:
+
+# Enable Home Assistant API
+api:
+  password: ""
+
+ota:
+  - platform: esphome
+    password: ""
+web_server:
+  port: 80
+output:
+  - platform: gpio
+    id: onboard_led_output
+    pin: GPIO8
+    inverted: true
+
+light:
+  - platform: binary
+    name: "Onboard LED"
+    output: onboard_led_output
+    id: onboard_led_status
+    restore_mode: "ALWAYS_OFF"
+
+wifi:
+  ssid: "Home"
+  password: "Tinker11!!"
+
+  # Enable fallback hotspot (captive portal) in case wifi connection fails
+  ap:
+    ssid: "Onboardled Fallback Hotspot"
+    password: "Tinker11!!"
+
+captive_portal:
