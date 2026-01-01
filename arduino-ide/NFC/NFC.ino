@@ -9,6 +9,9 @@
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);  // Create MFRC522 instance
 
+#define LED_PIN_1 1 //blue
+#define LED_PIN_2 20 // red
+#define LED_PIN_3 9 //green
 
 uint8_t broadcastAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
@@ -62,6 +65,29 @@ void setup() {
     Serial.println("Failed to add peer");
     return;
   }
+
+  pinMode(LED_PIN_1, OUTPUT);
+  pinMode(LED_PIN_2, OUTPUT);
+  pinMode(LED_PIN_3, OUTPUT);
+
+    Serial.println("BLUE is ON...");
+  digitalWrite(LED_PIN_1, HIGH);
+  delay(2000);
+   digitalWrite(LED_PIN_1, LOW);
+
+      Serial.println("red is ON...");
+  digitalWrite(LED_PIN_2, HIGH);
+  
+  delay(2000);
+   digitalWrite(LED_PIN_2, LOW);
+
+
+  Serial.println("GREEN is ON...");
+  digitalWrite(LED_PIN_3, HIGH);
+  
+  delay(2000);
+   digitalWrite(LED_PIN_3, LOW);
+
 }
 
 void loop() {
