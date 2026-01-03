@@ -4,13 +4,14 @@
 #include <esp_now.h>
 #include <WiFi.h>
 #include <esp_wifi.h>
-#include <Adafruit_NeoPixel.h>
+
 
 #define RST_PIN         3           
 #define SS_PIN          7           
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
+//RGB LED Pins
 #define LED_PIN_R 20 // Red
 #define LED_PIN_G 0  // Green
 #define LED_PIN_B 1  // Blue
