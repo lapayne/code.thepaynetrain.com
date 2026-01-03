@@ -4,15 +4,16 @@
 #include <esp_now.h>
 #include <WiFi.h>
 #include <esp_wifi.h>
+#include <Adafruit_NeoPixel.h>
 
 #define RST_PIN         3           
 #define SS_PIN          7           
 
 MFRC522 mfrc522(SS_PIN, RST_PIN);
 
-#define LED_PIN_1 1  // Blue
-#define LED_PIN_2 20 // Red
-#define LED_PIN_3 0  // Green
+#define LED_PIN_R 20 // Red
+#define LED_PIN_G 0  // Green
+#define LED_PIN_B 1  // Blue
 
 // --- AUTHORIZATION SETTINGS ---
 // Add your authorized UIDs here (Must be UPPERCASE)
@@ -27,18 +28,55 @@ typedef struct struct_message {
 struct_message myData;
 esp_now_peer_info_t peerInfo;
 
-void OnDataSent(const wifi_tx_info_t *tx_info, esp_now_send_status_t status) {
+void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
   Serial.print("\r\nLast Packet Send Status:\t");
   Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
 }
 
 void flashRed() {
+  analogWrite(LED_PIN_B, 0);
   for (int i = 0; i < 4; i++) {
-    digitalWrite(LED_PIN_2, HIGH);
+    analogWrite(LED_PIN_R, 255);
     delay(150);
-    digitalWrite(LED_PIN_2, LOW);
+    analogWrite(LED_PIN_R, 0);
     delay(150);
+     
   }
+  analogWrite(LED_PIN_B, 255);
+}
+
+// Helper function to convert Hue to RGB and write to pins
+void setHue(int hue) { // hue: 0 to 360
+  int r, g, b;
+  float s = 1.0, v = 1.0; // Max saturation and brightness
+
+  float c = v * s;
+  float x = c * (1 - abs(fmod(hue / 60.0, 2) - 1));
+  float m = v - c;
+  float rf, gf, bf;
+
+  if (hue < 60) { rf = c; gf = x; bf = 0; }
+  else if (hue < 120) { rf = x; gf = c; bf = 0; }
+  else if (hue < 180) { rf = 0; gf = c; bf = x; }
+  else if (hue < 240) { rf = 0; gf = x; bf = c; }
+  else if (hue < 300) { rf = x; gf = 0; bf = c; }
+  else { rf = c; gf = 0; bf = x; }
+
+  // Convert to 0-255 for analogWrite
+  analogWrite(LED_PIN_R, (rf + m) * 255);
+  analogWrite(LED_PIN_G, (gf + m) * 255);
+  analogWrite(LED_PIN_B, (bf + m) * 255);
+}
+
+void rainbowCycle(int ms) {
+  for (int h = 0; h < 360; h++) {
+    setHue(h);
+    delay(ms / 360); // Distribute duration across 360 degrees
+  }
+  // Turn off after cycle
+  analogWrite(LED_PIN_R, 0);
+  analogWrite(LED_PIN_G, 0);
+  analogWrite(LED_PIN_B, 0);
 }
 
 void setup() {
@@ -63,9 +101,11 @@ void setup() {
   peerInfo.encrypt = false;
   esp_now_add_peer(&peerInfo);
 
-  pinMode(LED_PIN_1, OUTPUT);
-  pinMode(LED_PIN_2, OUTPUT);
-  pinMode(LED_PIN_3, OUTPUT);
+  pinMode(LED_PIN_B, OUTPUT);
+  pinMode(LED_PIN_R, OUTPUT);
+  pinMode(LED_PIN_G, OUTPUT);
+
+  analogWrite(LED_PIN_B, 255);
 }
 
 void loop() {
@@ -96,11 +136,14 @@ void loop() {
     
     // Send data only if authorized
     esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
-    
+     analogWrite(LED_PIN_B, 0);
     // Green solid light for success
-    digitalWrite(LED_PIN_3, HIGH);
-    delay(1000);
-    digitalWrite(LED_PIN_3, LOW);
+    analogWrite(LED_PIN_G, 255);
+    delay(2000);
+    analogWrite(LED_PIN_G, 0);
+     delay(150);
+     rainbowCycle(5000);
+     analogWrite(LED_PIN_B, 255);
   } 
   else {
     Serial.println("Access Denied: " + tempUID);

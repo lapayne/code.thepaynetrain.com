@@ -17,6 +17,7 @@ This tutorial assumes you have the following as a minimum in order to complete a
 - A photoresistor
 - LED's of various colours
 - a RGB LED
+- A power supply module (this is optional, the ESP32 can provide power on its own as well)
 
 ## Software
 
