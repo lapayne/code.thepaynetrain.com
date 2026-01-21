@@ -1,5 +1,5 @@
 ---
-sidebar_position: 4
+sidebar_position: 5
 id: writing-code
 title: Configuring VS Code and writing simple code
 description: Get the basics done

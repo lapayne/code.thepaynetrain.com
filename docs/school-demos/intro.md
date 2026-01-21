@@ -1,5 +1,5 @@
 ---
-sidebar_position: 1
+sidebar_position: 2
 id: introduction
 title: Introduction to the tutorials
 description: Understand what you're working with.

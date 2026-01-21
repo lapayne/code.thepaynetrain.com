@@ -1,5 +1,5 @@
 ---
-sidebar_position: 2
+sidebar_position: 3
 id: first-electronics-circuit-overview
 title: Your first Electronics circuit overview
 description: Understand what you're working with.
