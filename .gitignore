@@ -23,3 +23,5 @@ yarn-error.log*
 /arduino-ide/libraries
 .vscode/
 *.log
+.firebase
+.pio/

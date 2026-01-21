@@ -2,27 +2,14 @@
 #include <Adafruit_ST7789.h>
 #include <SPI.h>
 
-// ------------------------------------
-// 1. PIN DEFINITIONS
-// ------------------------------------
 #define TFT_CS      7 
 #define TFT_DC      3 
 #define TFT_RST     10 
 #define TFT_MOSI    6 
 #define TFT_SCLK    4
 
-#define POT_PIN     2   // Potentiometer input
-#define LED_PIN     1  // Onboard LED on ESP32-C3 SuperMini
-
-// ------------------------------------
-// 2. COLOR DEFINITIONS (RGB565)
-// ------------------------------------
-#define HAT_RED     0xF800      // Bright Red
-#define BLACK_BG    0x0000      // Black
-#define GREEN_BG    0x2D43      // Forest Green
-#define HAT_WHITE   0xFFFF      // White
-#define HAT_ERASE   0x0000      // Erase color
-
+#define POT_PIN     2   
+#define LED_PIN     1  
 
 // --- LOGO COLORS (RGB565) ---
 #define BF_SKY_BLUE    0x867D  // Light blue sky
@@ -31,89 +18,50 @@
 #define BF_HILL_DARK   0x44C4  // Darker green hill
 #define BF_BROWN       0x8200  // Tree trunk
 #define BF_TEXT_GREY   0x4208  // Dark charcoal text
+#define BLACK_BG    0x0000      // Black
+#define GREEN_BG    0x2D43      // Forest Green
 
-// ------------------------------------
-// 3. GLOBAL VARIABLES
-// ------------------------------------
+// STEVE SPECIFIC COLORS (RGB565)
+#define STEVE_SKIN  0xFD4B // Pinkish Tan
+#define STEVE_HAIR  0x4200 // Dark Brown
+#define STEVE_EYE   0x421F // Blue/White mix
+#define STEVE_MOUTH 0x6180 // Reddish Brown
+
 Adafruit_ST7789 tft = Adafruit_ST7789(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCLK, TFT_RST);
 
-// TIMING VARIABLES
 uint32_t lastSerialPrint = 0; 
-const int printInterval = 200; // Read Pot & Update LED every 200ms
+const int printInterval = 200; 
 
 uint32_t lastHatToggle = 0;
-const uint32_t hatInterval = 20000; // Update Screen every 20 seconds
+const uint32_t hatInterval = 20000; 
 bool hatIsOn = false;
 
-void setup() {
-    Serial.begin(115200);
-    
-    // Initialize SPI and Display
-    SPI.begin(TFT_SCLK, -1, TFT_MOSI, TFT_CS);
-    SPI.setFrequency(40000000); 
-    tft.init(240, 320); 
-    tft.setRotation(1);
-    tft.fillScreen(BLACK_BG); 
-    drawSchoolLogo(20, 40);  
-    
-    // Configure Pins
-    pinMode(POT_PIN, INPUT);
-    pinMode(LED_PIN, OUTPUT);
-}
 
-void loop() {
-    // --- TIMER 1: POTENTIOMETER & BRIGHTNESS (Every 200ms) ---
-    if (millis() - lastSerialPrint >= printInterval) {
-        lastSerialPrint = millis();
-        int potValue = analogRead(POT_PIN);
-        int brightness = map(potValue, 0, 4095, 0, 255);
-        analogWrite(LED_PIN, brightness);
-    }
-
-    // --- TIMER 2: IMAGE TOGGLE (Every 100 Seconds) ---
-    if (millis() - lastHatToggle >= hatInterval) {
-        lastHatToggle = millis();
-        hatIsOn = !hatIsOn; 
-
-        if (hatIsOn) {
-            // Screen 1: Elf Hat on Green
-            tft.fillScreen(GREEN_BG);
-            drawSantaHat(160, 120, HAT_WHITE, GREEN_BG); 
-        } else {
-            // Screen 2: School Logo on White
-            tft.fillScreen(BLACK_BG); // White background matches logo better
-            drawSchoolLogo(20, 40);    // Centered vertically
-        }
-    }
-}
-
-// ------------------------------------
-// 4. DRAWING FUNCTION
-// ------------------------------------
-void drawSantaHat(int x, int y, uint16_t hatColor, uint16_t bgColor) {
-    int hatHeight = 100;
-    int hatWidth = 120;
-    int trimHeight = 20;
-    uint16_t trimPompomColor = HAT_WHITE;
-    uint16_t primaryColor = (bgColor == BLACK_BG) ? HAT_ERASE : HAT_RED;
-    uint16_t trimColor = (bgColor == BLACK_BG) ? HAT_ERASE : trimPompomColor;
-
+void drawSteve(int x, int y, int s) {
     tft.startWrite();
-    tft.fillTriangle(x, y - hatHeight, x - hatWidth/2, y - trimHeight, x + hatWidth/2, y - trimHeight, primaryColor);
-    tft.fillRect(x - hatWidth/2, y - trimHeight, hatWidth, trimHeight, trimColor);
-    tft.fillCircle(x, y - hatHeight, 10, trimColor);
     
-    tft.setCursor(15, 180);
-    tft.setTextColor(ST77XX_WHITE);
-    tft.setTextSize(3);
-    tft.println("Merry Christmas");
-    tft.setCursor(120, 210);
-    tft.println("Max");
+    // 1. Skin Base
+    tft.fillRect(x, y, 8*s, 8*s, STEVE_SKIN);
+    
+    // 2. Hair (Top 2 rows and sides)
+    tft.fillRect(x, y, 8*s, 2*s, STEVE_HAIR); 
+    tft.fillRect(x, y + 2*s, 1*s, 3*s, STEVE_HAIR);
+    tft.fillRect(x + 7*s, y + 2*s, 1*s, 3*s, STEVE_HAIR);
+
+    // 3. Eyes (White part then pupils)
+    // Left eye
+    tft.fillRect(x + 1*s, y + 4*s, 2*s, 1*s, 0xFFFF); 
+    tft.fillRect(x + 1*s, y + 4*s, 1*s, 1*s, STEVE_EYE);
+    // Right eye
+    tft.fillRect(x + 5*s, y + 4*s, 2*s, 1*s, 0xFFFF);
+    tft.fillRect(x + 6*s, y + 4*s, 1*s, 1*s, STEVE_EYE);
+
+    // 4. Nose/Mouth area
+    tft.fillRect(x + 3*s, y + 5*s, 2*s, 1*s, STEVE_MOUTH); // Nose
+    tft.fillRect(x + 2*s, y + 6*s, 4*s, 1*s, STEVE_MOUTH); // Beard/Mouth
+
     tft.endWrite();
 }
-
-
-
 
 void drawSchoolLogo(int x, int y) {
     tft.startWrite();
@@ -156,4 +104,40 @@ void drawSchoolLogo(int x, int y) {
     tft.print("Farm");
 
     tft.endWrite();
+}
+
+void setup() {
+    Serial.begin(115200);
+    SPI.begin(TFT_SCLK, -1, TFT_MOSI, TFT_CS);
+    SPI.setFrequency(40000000); 
+    tft.init(240, 320); 
+    tft.setRotation(1);
+    tft.fillScreen(GREEN_BG);
+
+    drawSchoolLogo(20, 60); // Start with Elf
+    
+    pinMode(POT_PIN, INPUT);
+    pinMode(LED_PIN, OUTPUT);
+}
+
+void loop() {
+    if (millis() - lastSerialPrint >= printInterval) {
+        lastSerialPrint = millis();
+        int potValue = analogRead(POT_PIN);
+        int brightness = map(potValue, 0, 4095, 0, 255);
+        analogWrite(LED_PIN, brightness);
+    }
+
+    if (millis() - lastHatToggle >= hatInterval) {
+        lastHatToggle = millis();
+        hatIsOn = !hatIsOn; 
+
+        if (hatIsOn) {
+            tft.fillScreen(GREEN_BG);
+            drawSteve(100, 60, 15);
+        } else {
+            tft.fillScreen(GREEN_BG); // Same background as requested
+            drawSchoolLogo(20, 60); 
+        }
+    }
 }

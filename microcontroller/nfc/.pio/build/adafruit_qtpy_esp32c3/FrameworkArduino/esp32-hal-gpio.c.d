@@ -1,0 +1,23 @@
+.pio/build/adafruit_qtpy_esp32c3/FrameworkArduino/esp32-hal-gpio.c.o: \
+ C:/Users/lapay/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-gpio.c \
+ C:/Users/lapay/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-gpio.h \
+ C:/Users/lapay/.platformio/packages/framework-arduinoespressif32/variants/adafruit_qtpy_esp32c3/pins_arduino.h \
+ C:/Users/lapay/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal.h \
+ C:/Users/lapay/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-log.h \
+ C:/Users/lapay/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-matrix.h \
+ C:/Users/lapay/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-uart.h \
+ C:/Users/lapay/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-touch.h \
+ C:/Users/lapay/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-touch-ng.h \
+ C:/Users/lapay/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-dac.h \
+ C:/Users/lapay/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-adc.h \
+ C:/Users/lapay/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-spi.h \
+ C:/Users/lapay/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-i2c.h \
+ C:/Users/lapay/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-ledc.h \
+ C:/Users/lapay/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-rmt.h \
+ C:/Users/lapay/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-sigmadelta.h \
+ C:/Users/lapay/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-timer.h \
+ C:/Users/lapay/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-bt.h \
+ C:/Users/lapay/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-psram.h \
+ C:/Users/lapay/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-rgb-led.h \
+ C:/Users/lapay/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-cpu.h \
+ C:/Users/lapay/.platformio/packages/framework-arduinoespressif32/cores/esp32/esp32-hal-periman.h

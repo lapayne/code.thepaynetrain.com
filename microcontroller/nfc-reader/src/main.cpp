@@ -16,7 +16,10 @@ MFRC522 mfrc522(SS_PIN, RST_PIN);
 #define LED_PIN_G 0  // Green
 #define LED_PIN_B 1  // Blue
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9cd1f77f8042e84bdb0b87b53624ed316b09cf7d
 // --- AUTHORIZATION SETTINGS ---
 // Add your authorized UIDs here (Must be UPPERCASE)
 String allowedUIDs[] = {"0496DA753E6180", "5DA85A06"}; 
@@ -24,6 +27,7 @@ int allowedCount = sizeof(allowedUIDs) / sizeof(allowedUIDs[0]);
 
 uint8_t broadcastAddress[] = {0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF};
 
+<<<<<<< HEAD
 typedef struct {
     char uid[32];   // adjust size to match your UID
 } esp_now_data_t;
@@ -39,6 +43,19 @@ void OnDataSent(const wifi_tx_info_t *tx_info, esp_now_send_status_t status) {
 
 esp_now_peer_info_t peerInfo;
 
+=======
+typedef struct struct_message {
+  char uid[32];
+} struct_message;
+struct_message myData;
+esp_now_peer_info_t peerInfo;
+
+void OnDataSent(const uint8_t *mac_addr, esp_now_send_status_t status) {
+  Serial.print("\r\nLast Packet Send Status:\t");
+  Serial.println(status == ESP_NOW_SEND_SUCCESS ? "Delivery Success" : "Delivery Fail");
+}
+
+>>>>>>> 9cd1f77f8042e84bdb0b87b53624ed316b09cf7d
 void flashRed() {
   analogWrite(LED_PIN_B, 0);
   for (int i = 0; i < 4; i++) {
@@ -85,6 +102,7 @@ void rainbowCycle(int ms) {
   analogWrite(LED_PIN_B, 0);
 }
 
+<<<<<<< HEAD
 void setPurple() {
   analogWrite(LED_PIN_R, 255);
   analogWrite(LED_PIN_G, 0);
@@ -93,18 +111,27 @@ void setPurple() {
 }
 
 
+=======
+>>>>>>> 9cd1f77f8042e84bdb0b87b53624ed316b09cf7d
 void setup() {
   Serial.begin(115200);
   while (!Serial);
 
   SPI.begin(4, 5, 6, 7);
   mfrc522.PCD_Init();
+<<<<<<< HEAD
 
+=======
+  
+>>>>>>> 9cd1f77f8042e84bdb0b87b53624ed316b09cf7d
   WiFi.mode(WIFI_STA);
   esp_wifi_set_promiscuous(true);
   esp_wifi_set_channel(1, WIFI_SECOND_CHAN_NONE);
   esp_wifi_set_promiscuous(false);
+<<<<<<< HEAD
   esp_wifi_set_max_tx_power(40);
+=======
+>>>>>>> 9cd1f77f8042e84bdb0b87b53624ed316b09cf7d
 
   if (esp_now_init() != ESP_OK) return;
 
@@ -120,16 +147,23 @@ void setup() {
   pinMode(LED_PIN_R, OUTPUT);
   pinMode(LED_PIN_G, OUTPUT);
 
+<<<<<<< HEAD
 
 
 
+=======
+  analogWrite(LED_PIN_B, 255);
+>>>>>>> 9cd1f77f8042e84bdb0b87b53624ed316b09cf7d
 }
 
 void loop() {
   if (!mfrc522.PICC_IsNewCardPresent()) return;
   if (!mfrc522.PICC_ReadCardSerial()) return;
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 9cd1f77f8042e84bdb0b87b53624ed316b09cf7d
   // 1. Get UID from tag
   String tempUID = "";
   for (byte i = 0; i < mfrc522.uid.size; i++) {
@@ -147,6 +181,7 @@ void loop() {
     }
   }
 
+<<<<<<< HEAD
   
   memset(outgoingData.uid, 0, sizeof(outgoingData.uid));
   tempUID.toCharArray(outgoingData.uid, sizeof(outgoingData.uid));
@@ -174,13 +209,34 @@ if (authorized) {
   rainbowCycle(5000);
   analogWrite(LED_PIN_B, 255);
 }
+=======
+  // 3. Logic based on authorization
+  if (authorized) {
+    Serial.println("Access Granted: " + tempUID);
+    tempUID.toCharArray(myData.uid, 32);
+    
+    // Send data only if authorized
+    esp_err_t result = esp_now_send(broadcastAddress, (uint8_t *) &myData, sizeof(myData));
+     analogWrite(LED_PIN_B, 0);
+    // Green solid light for success
+    analogWrite(LED_PIN_G, 255);
+    delay(2000);
+    analogWrite(LED_PIN_G, 0);
+     delay(150);
+     rainbowCycle(5000);
+     analogWrite(LED_PIN_B, 255);
+  } 
+>>>>>>> 9cd1f77f8042e84bdb0b87b53624ed316b09cf7d
   else {
     Serial.println("Access Denied: " + tempUID);
     flashRed(); 
   }
 
+<<<<<<< HEAD
   
 
+=======
+>>>>>>> 9cd1f77f8042e84bdb0b87b53624ed316b09cf7d
   mfrc522.PICC_HaltA();
   delay(1000); 
 }
