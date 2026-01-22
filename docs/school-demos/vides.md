@@ -46,7 +46,7 @@ A demonstration of a tune being played when the tempreture gets too high.
 
 A demonstration of a large display changing images over time and drawing different images.
 <video controls width="800">
-  <source src="https://firebasestorage.googleapis.com/v0/b/maxpayne-vip.appspot.com/o/code%2FIMG_8703.mp4?alt=media&token=e38b5d87-91c2-42dc-a083-fcf1e7b446f7" type="video/mp4" />
+  <source src="https://firebasestorage.googleapis.com/v0/b/maxpayne-vip.appspot.com/o/code%2FIMG_8703.mp4?alt=media&token=a45cfbf0-de89-4ed9-a0fe-88731245c60f" type="video/mp4" />
   Your browser does not support the video tag.
 </video>
 
